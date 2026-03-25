@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import { ACCESS_TOKEN_SECRET } from '../config/config.js';
+import { ACCESS_TOKEN_SECRET } from '../config/db.js';
 
 //Middlware para validar que exista un token de jwt
 export const authToken = (req, res, next) => { 
