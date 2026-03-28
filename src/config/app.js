@@ -31,7 +31,6 @@ app.use(
 
 app.use(cookieParser());
 
-// Ruta principal de las APIs
 // app.use('/anteiku', adminRoutes);
 app.use('/anteiku', Users);
 

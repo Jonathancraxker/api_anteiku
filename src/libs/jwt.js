@@ -1,32 +1,12 @@
-// import jwt from 'jsonwebtoken';
-
-// export function accesoToken(payload, secret, expiresIn) {
-//     return new Promise((resolve, reject) => {
-//         jwt.sign(
-//             payload,
-//             secret,
-//             {
-//                 expiresIn: expiresIn
-//             },
-//             (err, token) => {
-//                 if (err) reject(err);
-//                 resolve(token);
-//             }
-//         );
-//     });
-// }
-
-import {ACCESS_TOKEN_SECRET} from '../config/db.js'
 import jwt from 'jsonwebtoken';
+import { ACCESS_TOKEN_SECRET } from '../config/db.js';
 
-export function accesoToken(payload) {
+export function crearAccesoToken(payload) {
     return new Promise((resolve, reject) => {
         jwt.sign(
-            { id: payload.id, tipo_usuario: payload.tipo_usuario},
+            payload, // Pasamos todo el objeto (id, permisos, etc.)
             ACCESS_TOKEN_SECRET,
-            {
-                expiresIn: "1d", //tiempo de expiración, se puede poner min, hora o días.
-            },
+            { expiresIn: "30d" },
             (err, token) => {
                 if (err) reject(err);
                 resolve(token);

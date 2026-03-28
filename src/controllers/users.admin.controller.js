@@ -8,7 +8,11 @@ export const getUsers = async (req, res) => {
     if (error) {
         return res.status(400).json({ error: error.message });
     } else {
-        return res.status(200).json(data);
+        res.json({
+            statusCode: 200,
+            intOpCode: 0,
+            data: data
+        });
     }
 }
 
@@ -16,7 +20,11 @@ export const getUserId = async (req, res) => {
     const { id } = req.params;
     try {
         const { data } = await conn.from('usuarios').select('*').eq('id', id);
-        res.status(200).json(data);
+        res.json({
+            statusCode: 200,
+            intOpCode: 0,
+            data: data
+        });
     } catch (error) {
         console.error("Error al obtener usuario por ID:", error);
         res.status(400).json({ message: error.message });
@@ -56,7 +64,12 @@ export const createUserCrud = async (req, res) => {
 
         if (error) return res.status(400).json({ error: error.message });
 
-        res.status(201).json({ message: "Usuario creado exitosamente", user: data[0] });
+        res.json({
+            statusCode: 201,
+            intOpCode: 0,
+            message: "Usuario creado exitosamente",
+            user: data[0]
+        });
 
     } catch (error) {
         res.status(500).json({ error: "Error en el servidor" });
@@ -92,9 +105,11 @@ export const updateUserId = async (req, res) => {
             return res.status(404).json({ message: `No se encontró el usuario` });
         }
 
-        res.status(200).json({ 
-            message: "Usuario actualizado exitosamente", 
-            user: data[0] 
+        res.json({
+            statusCode: 200,
+            intOpCode: 0,
+            message: "Usuario actualizado exitosamente",
+            user: data[0]
         });
 
     } catch (error) {
@@ -103,7 +118,7 @@ export const updateUserId = async (req, res) => {
 }
 
 // Función para actualizar la contraseña de un usuario por ID
-export const updatePassword = async (req, res) => {
+export const updateUserIdPassword = async (req, res) => {
     const { id } = req.params;
     const { password } = req.body;
 
@@ -123,7 +138,11 @@ export const updatePassword = async (req, res) => {
             return res.status(404).json({ message: "Usuario no encontrado" });
         }
 
-        res.status(200).json({ message: "Contraseña actualizada correctamente" });
+        res.json({
+            statusCode: 200,
+            intOpCode: 0,
+            message: "Contraseña actualizada exitosamente"
+        });
 
     } catch (error) {
         res.status(500).json({ error: "Error al actualizar la contraseña" });
@@ -147,7 +166,11 @@ export const deleteUserId = async (req, res) => {
             });
         }
 
-        res.status(200).json({ message: "Usuario eliminado exitosamente" });
+        res.json({
+            statusCode: 200,
+            intOpCode: 0,
+            message: "Usuario eliminado exitosamente"
+        });
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
