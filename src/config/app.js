@@ -13,7 +13,7 @@ app.get('/', (req, res) => {
 });
 
 // Configuración CORS para múltiples orígenes
-const allowedOrigins = ['http://localhost:3000', 'http://localhost:5173', 'http://localhost:5174'];
+const allowedOrigins = ['http://localhost:3000', 'http://localhost:4200', 'http://localhost:5173', 'http://localhost:5174'];
 
 app.use(
   cors({

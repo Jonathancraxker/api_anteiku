@@ -33,7 +33,12 @@ export const createUser= async (req, res) => {
             .select();
 
         if (error) return res.status(400).json({ error: error.message });
-        res.status(201).json({ message: "Usuario creado exitosamente", user: data[0] });
+        res.json({
+            statusCode: 201,
+            intOpCode: 0,
+            message: "Usuario creado exitosamente",
+            data
+        });
 
     } catch (error) {
         res.status(500).json({ error: "Error en el servidor" });
@@ -58,8 +63,15 @@ export const loginUser = async (req, res) => {
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) return res.status(401).json({ message: "Contraseña incorrecta" });
 
-        // 3. OBTENER PERMISOS (Aquí está la magia del JSON SCHEMA)
+        // 3. OBTENER PERMISOS
         // Consultamos la tabla de relación uniendo con la tabla permisos
+        // Primero obtenemos los permisos globales del usuario (perfil, y user:view que son por default)
+        const { data: permisosGlobales } = await conn
+        .from('permisos')
+        .select('nombre')
+        .in('id', user.permisos_globales || []);
+
+        // Luego obtenemos los permisos asignados a través de los grupos a los que pertenece el usuario
         const { data: permisosData } = await conn
             .from('grupo_usuario_permisos')
             .select(`
@@ -68,12 +80,16 @@ export const loginUser = async (req, res) => {
             .eq('usuario_id', user.id);
 
         // Limpiamos el array para que solo sean strings: ["user:view", "ticket:add"...]
-        const listaPermisos = [...new Set(permisosData.map(p => p.permisos.nombre))];
+        const listaPermisos = [
+            ...permisosGlobales.map(p => p.nombre), // Permisos globales
+            ...permisosData.map(p => p.permisos.nombre) // Permisos de grupos
+        ];
 
         //Actualizar último login
         await conn
             .from('usuarios')
-            .update({ last_login: new Date() })
+            // aqui ajusta la hora que si sea la correcta con now()
+            .update({ last_login: new Date().toISOString() })
             .eq('id', user.id);
 
         // 4. Generar Token

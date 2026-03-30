@@ -15,9 +15,18 @@ export const registroSchema = z.object({
     }),
     password: z.string({
         required_error:'La contraseña es requerida'
-    }).min(3,{
+    })
+    .min(3,{
         message:'La contraseña debe tener minimo 3 caracteres'
-    }),
+    })
+    // Al menos una minuscula, una mayuscula, un numero
+    .regex(/[A-Z]/, { message: 'La contraseña debe tener al menos una mayúscula' })
+    // Al menos una minúscula
+    .regex(/[a-z]/, { message: 'La contraseña debe tener al menos una minúscula' })
+    // Al menos un número
+    .regex(/[0-9]/, { message: 'La contraseña debe tener al menos un número' })
+    // Al menos un caracter especial
+    .regex(/[@#$!%*?&]/, { message: 'La contraseña debe tener al menos un caracter especial (@#$!%*?&)' }),
     direccion: z.string ({
         required_error: 'La direccion es requerida'
     }).nonempty('La direccion no puede estar vacia'),
@@ -45,6 +54,14 @@ export const loginSchema = z.object({
     }).min(3,{
         message:'La contraseña debe tener minimo 3 caracteres'
     }).nonempty('La contraseña no puede estar vacía')
+    // Al menos una minuscula, una mayuscula, un numero
+    .regex(/[A-Z]/, { message: 'La contraseña debe tener al menos una mayúscula' })
+    // Al menos una minúscula
+    .regex(/[a-z]/, { message: 'La contraseña debe tener al menos una minúscula' })
+    // Al menos un número
+    .regex(/[0-9]/, { message: 'La contraseña debe tener al menos un número' })
+    // Al menos un caracter especial
+    .regex(/[@#$!%*?&]/, { message: 'La contraseña debe tener al menos un caracter especial (@#$!%*?&)' })
 })
 
 
@@ -69,4 +86,12 @@ export const updatePasswordSchema = z.object({
     }).min(3,{
         message:'La contraseña debe tener minimo 3 caracteres'
     })
+    // Al menos una minuscula, una mayuscula, un numero
+    .regex(/[A-Z]/, { message: 'La contraseña debe tener al menos una mayúscula' })
+    // Al menos una minúscula
+    .regex(/[a-z]/, { message: 'La contraseña debe tener al menos una minúscula' })
+    // Al menos un número
+    .regex(/[0-9]/, { message: 'La contraseña debe tener al menos un número' })
+    // Al menos un caracter especial
+    .regex(/[@#$!%*?&]/, { message: 'La contraseña debe tener al menos un caracter especial (@#$!%*?&)' })
 })
