@@ -10,7 +10,7 @@ export const getUsers = async (req, res) => {
     } else {
         res.json({
             statusCode: 200,
-            intOpCode: 0,
+            intOpCode: "SxUS200", // Código de operación para "Get Users"
             data: data
         });
     }
@@ -22,7 +22,7 @@ export const getUserId = async (req, res) => {
         const { data } = await conn.from('usuarios').select('*').eq('id', id);
         res.json({
             statusCode: 200,
-            intOpCode: 0,
+            intOpCode: "SxUS201", // Código de operación para "Get User by ID"
             data: data
         });
     } catch (error) {
@@ -33,7 +33,7 @@ export const getUserId = async (req, res) => {
 
 // Función para crear un usuario nuevo
 export const createUserCrud = async (req, res) => {
-    const { nombre_completo, username, email, password, direccion, telefono } = req.body;
+    const { nombre_completo, username, email, password, permisos_globales } = req.body;
 
     try {
         // Validación de email y username
@@ -57,8 +57,7 @@ export const createUserCrud = async (req, res) => {
                 username,
                 email,
                 password: hashedPassword,
-                direccion,
-                telefono
+                permisos_globales: permisos_globales || [1, 4] // Asignar permisos por defecto si no se proporcionan
             }])
             .select();
 
@@ -66,9 +65,11 @@ export const createUserCrud = async (req, res) => {
 
         res.json({
             statusCode: 201,
-            intOpCode: 0,
-            message: "Usuario creado exitosamente",
-            user: data[0]
+            intOpCode: "SxUS202", // Código de operación para "Create User"
+            data: [
+                data[0],
+                { message: "Usuario creado exitosamente" }
+            ]
         });
 
     } catch (error) {
@@ -79,7 +80,7 @@ export const createUserCrud = async (req, res) => {
 // Función para actualizar un usuario por ID
 export const updateUserId = async (req, res) => {
     const { id } = req.params;
-    const { nombre_completo, username, email, direccion, telefono } = req.body;
+    const { nombre_completo, username, email, permisos_globales } = req.body;
 
     try {
         const { data, error, count } = await conn
@@ -88,8 +89,7 @@ export const updateUserId = async (req, res) => {
                 nombre_completo,
                 username,
                 email,
-                direccion,
-                telefono
+                permisos_globales
             })
             .eq('id', id)
             .select(); // Para que 'data' contenga el usuario actualizado
@@ -107,9 +107,9 @@ export const updateUserId = async (req, res) => {
 
         res.json({
             statusCode: 200,
-            intOpCode: 0,
-            message: "Usuario actualizado exitosamente",
-            user: data[0]
+            intOpCode: "UpdUS203", // Código de operación para "Update User"
+            data: [{ message: "Usuario actualizado exitosamente" },
+            data[0]]
         });
 
     } catch (error) {
@@ -140,8 +140,8 @@ export const updateUserIdPassword = async (req, res) => {
 
         res.json({
             statusCode: 200,
-            intOpCode: 0,
-            message: "Contraseña actualizada exitosamente"
+            intOpCode: "UpdPwUS204", // Código de operación para "Update User Password"
+            data: [{ message: "Contraseña actualizada exitosamente" }]
         });
 
     } catch (error) {
@@ -162,14 +162,14 @@ export const deleteUserId = async (req, res) => {
         if (error) throw error;
         if (count === 0) {
             return res.status(404).json({ 
-                message: `No se encontró el usuario` 
+                message: `No se encontró el usuario`
             });
         }
 
         res.json({
             statusCode: 200,
-            intOpCode: 0,
-            message: "Usuario eliminado exitosamente"
+            intOpCode: "DelUS205", // Código de operación para "Delete User"
+            data: [{ message: "Usuario eliminado exitosamente" }]
         });
     } catch (error) {
         res.status(400).json({ error: error.message });

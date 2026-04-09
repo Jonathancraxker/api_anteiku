@@ -41,6 +41,35 @@ export const registroSchema = z.object({
     })
 })
 
+// Para crear usuario en CRUD de admin, sin direccion ni telefono
+export const createUserCrudSchema = z.object({
+    nombre_completo: z.string ({
+        required_error: 'El nombre completo es requerido'
+    }).nonempty('El nombre completo no puede estar vacio'),
+    username: z.string ({
+        required_error: 'El username es requerido'
+    }).nonempty('El username no puede estar vacio'),
+    email: z.string ({
+        required_error: 'El email es requerido'
+    }).nonempty('El email no puede estar vacio')
+    .email({
+        message: 'email no valido'
+    }),
+    password: z.string({
+        required_error:'La contraseña es requerida'
+    })
+    .min(3,{
+        message:'La contraseña debe tener minimo 3 caracteres'
+    })
+    // Al menos una minuscula, una mayuscula, un numero
+    .regex(/[A-Z]/, { message: 'La contraseña debe tener al menos una mayúscula' })
+    // Al menos una minúscula
+    .regex(/[a-z]/, { message: 'La contraseña debe tener al menos una minúscula' })
+    // Al menos un número
+    .regex(/[0-9]/, { message: 'La contraseña debe tener al menos un número' })
+    // Al menos un caracter especial
+    .regex(/[@#$!%*?&]/, { message: 'La contraseña debe tener al menos un caracter especial (@#$!%*?&)' })
+})
 
 export const loginSchema = z.object({
     email: z.string ({
@@ -94,4 +123,17 @@ export const updatePasswordSchema = z.object({
     .regex(/[0-9]/, { message: 'La contraseña debe tener al menos un número' })
     // Al menos un caracter especial
     .regex(/[@#$!%*?&]/, { message: 'La contraseña debe tener al menos un caracter especial (@#$!%*?&)' })
+})
+
+export const updateProfileSchema = z.object({
+    nombre_completo: z.string().optional(),
+    username: z.string().nonempty('El username no puede estar vacio').optional(),
+    email: z.string ({
+        required_error: 'El email es requerido'
+    }).nonempty('El email no puede estar vacio')
+    .email({
+        message: 'email no valido'
+    }),
+    direccion: z.string().optional(),
+    telefono: z.string().optional()
 })

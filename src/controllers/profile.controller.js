@@ -42,8 +42,8 @@ export const updateProfile = async (req, res) => {
         res.json({
             statusCode: 200,
             intOpCode: 0,
-            message: "Usuario actualizado exitosamente",
-            data
+            data: [{ message: "Perfil actualizado exitosamente" },
+            data[0]]
         });
     } catch (error) {
         res.status(500).json({ message: "Error al actualizar" });
@@ -88,7 +88,7 @@ export const deleteProfile = async (req, res) => {
         res.json({
             statusCode: 200,
             intOpCode: 0,
-            message: "Perfil eliminado exitosamente"
+            data: [{ message: "Perfil eliminado exitosamente" }]
         });
     } catch (error) {
         return res.status(500).json({ message: "Error al eliminar el perfil" });

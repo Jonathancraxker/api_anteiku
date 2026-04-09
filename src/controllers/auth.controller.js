@@ -98,6 +98,14 @@ export const loginUser = async (req, res) => {
             permissions: listaPermisos
         });
 
+        // Guardar token en cookie segura
+        res.cookie('token', token, {
+            httpOnly: true, // Solo accesible por HTTP
+            secure: process.env.NODE_ENV === 'production', // Solo en producción
+            sameSite: 'none', // Para permitir cookies en cross-site (ajusta según tu dominio)
+            maxAge: 7 * 24 * 60 * 60 * 1000 // 7 días
+        });
+
         // 5. Formatear respuesta con datos del usuario, token y permisos
         res.status(200).json({
             statusCode: 200,
@@ -121,6 +129,7 @@ export const loginUser = async (req, res) => {
 };
 
 export const logout = (req, res) => {
+    res.clearCookie('token');
     res.json({
             statusCode: 200,
             intOpCode: 0,
