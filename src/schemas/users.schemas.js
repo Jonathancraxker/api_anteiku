@@ -134,6 +134,20 @@ export const updateProfileSchema = z.object({
     .email({
         message: 'email no valido'
     }),
+    //quiero que la contraseña sea opcional, pero si se envía, que cumpla con las validaciones
+    password: z.string().min(10,{
+        message:'La contraseña debe tener minimo 10 caracteres'
+    })
+    // Al menos una minuscula, una mayuscula, un numero
+    .regex(/[A-Z]/, { message: 'La contraseña debe tener al menos una mayúscula' })
+    // Al menos una minúscula
+    .regex(/[a-z]/, { message: 'La contraseña debe tener al menos una minúscula' })
+    // Al menos un número
+    .regex(/[0-9]/, { message: 'La contraseña debe tener al menos un número' })
+    // Al menos un caracter especial
+    .regex(/[@#$!%*?&]/, { message: 'La contraseña debe tener al menos un caracter especial (@#$!%*?&)' })
+    .optional()
+    .or(z.literal('')),
     direccion: z.string().optional(),
     telefono: z.string().optional()
 })

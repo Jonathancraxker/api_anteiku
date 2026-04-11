@@ -15,11 +15,11 @@ router.post('/login/', validateMid(loginSchema), loginUser); //Iniciar sesión
 router.post('/logout/', logout); // Cerrar sesión eliminando token de cookies
 
 // CRUD de usuarios para admin
-router.get('/users/', getUsers); //Obtener todos los usuarios
-router.get('/users/:id', getUserId); //Obtener información de un usuario por id
-router.post('/users/', validateMid(createUserCrudSchema), createUserCrud); //Registrar un usuario desde administrador
-router.put('/users/:id', validateMid(updateSchema), updateUserId); //Para modificar datos de usuario
-router.delete('/users/:id', deleteUserId); //Eliminar usuario
+router.get('/users/', authToken, getUsers); //Obtener todos los usuarios
+router.get('/users/:id', authToken, getUserId); //Obtener información de un usuario por id
+router.post('/users/', authToken, validateMid(createUserCrudSchema), createUserCrud); //Registrar un usuario desde administrador
+router.put('/users/:id', authToken, validateMid(updateSchema), updateUserId); //Para modificar datos de usuario
+router.delete('/users/:id', authToken, deleteUserId); //Eliminar usuario
 
 //Para modificar solo la contraseña de un usuario
 // router.put('/users/password/:id', validateMid(updatePasswordSchema), updateUserIdPassword);
@@ -27,9 +27,7 @@ router.delete('/users/:id', deleteUserId); //Eliminar usuario
 //Perfil de usuario
 router.get('/profile/', authToken, getProfile);
 router.put('/profile/', authToken, validateMid(updateProfileSchema), updateProfile);
-router.put('/profile/password', authToken, updateProfilePassword);
-router.delete('/profile/', authToken, deleteProfile);
-
-
+// router.put('/profile/password', authToken, updateProfilePassword);
+router.delete('/profile/', authToken, deleteProfile); //Eliminar cuenta de usuario logeado
 
 export default router;

@@ -63,27 +63,30 @@ export const loginUser = async (req, res) => {
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) return res.status(401).json({ message: "Contraseña incorrecta" });
 
-        // 3. OBTENER PERMISOS
-        // Consultamos la tabla de relación uniendo con la tabla permisos
-        // Primero obtenemos los permisos globales del usuario (perfil, y user:view que son por default)
-        const { data: permisosGlobales } = await conn
-        .from('permisos')
-        .select('nombre')
-        .in('id', user.permisos_globales || []);
+        // --- 3. OBTENER PERMISOS ---
+        
+        // 1. Obtenemos nombres de permisos para el mapa
+        const { data: todosLosPermisos } = await conn.from('permisos').select('id, nombre');
+        const mapa = Object.fromEntries(todosLosPermisos.map(p => [p.id, p.nombre]));
 
-        // Luego obtenemos los permisos asignados a través de los grupos a los que pertenece el usuario
-        const { data: permisosData } = await conn
-            .from('grupo_usuario_permisos')
-            .select(`
-                permisos (nombre)
-            `)
+        // 2. Permisos Globales
+        const globales = (user.permisos_globales || []).map(id => mapa[id]);
+
+        // 3. Permisos por Grupo (Usando tu tabla: grupo_usuario_permisos)
+        const { data: gruposData } = await conn
+            .from('grupo_usuario_permisos') // Nombre exacto de tu imagen
+            .select('grupo_id, permisos_grupo')
             .eq('usuario_id', user.id);
 
-        // Limpiamos el array para que solo sean strings: ["user:view", "ticket:add"...]
-        const listaPermisos = [
-            ...permisosGlobales.map(p => p.nombre), // Permisos globales
-            ...permisosData.map(p => p.permisos.nombre) // Permisos de grupos
-        ];
+        const permisosPorGrupo = {};
+        (gruposData || []).forEach(g => {
+            permisosPorGrupo[g.grupo_id] = (g.permisos_grupo || []).map(id => mapa[id]);
+        });
+
+        const listaPermisos = {
+            permisos_globales: globales,
+            groups: permisosPorGrupo
+        };
 
         //Actualizar último login
         await conn

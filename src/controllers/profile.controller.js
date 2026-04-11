@@ -24,11 +24,21 @@ export const getProfile = async (req, res) => {
 };
 
 export const updateProfile = async (req, res) => {
-    const { nombre_completo, username, email, direccion, telefono } = req.body;
+    const { nombre_completo, username, email, password, direccion, telefono } = req.body;
     try {
+
+        const updateData = { nombre_completo, username, email, direccion, telefono };
+
+        // Si se envió una nueva contraseña, la hasheamos, sino no la incluimos en el update
+        if (password) {
+            const salt = await bcrypt.genSalt(10);
+            const hashedPassword = await bcrypt.hash(password, salt);
+            updateData.password = hashedPassword;
+        }
+
         const { data, error } = await conn
             .from('usuarios')
-            .update({ nombre_completo, username, email, direccion, telefono })
+            .update(updateData)
             .eq('id', req.user.id)
             .select();
 
