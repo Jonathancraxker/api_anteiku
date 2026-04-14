@@ -103,9 +103,9 @@ export const loginUser = async (req, res) => {
 
         // Guardar token en cookie segura
         res.cookie('token', token, {
-            httpOnly: true, // Solo accesible por HTTP
-            secure: process.env.NODE_ENV === 'production', // Solo en producción
-            sameSite: 'none', // Para permitir cookies en cross-site (ajusta según tu dominio)
+            httpOnly: false, // Cambia a true si no necesitas acceso desde JS (recomendado)
+            secure: false, // Cambia a true en producción con HTTPS
+            sameSite: 'lax', // Para permitir cookies en cross-site (ajusta según tu dominio)
             maxAge: 7 * 24 * 60 * 60 * 1000 // 7 días
         });
 
@@ -139,3 +139,25 @@ export const logout = (req, res) => {
             message: "Sesión cerrada exitosamente"
         });
 }
+
+// auth.controller.js
+
+export const validateUserExists = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const { data: user, error } = await conn
+            .from('usuarios')
+            .select('id')
+            .eq('id', id)
+            .single();
+
+        if (error || !user) {
+            return res.status(404).json({ message: "Usuario no encontrado" });
+        }
+
+        return res.status(200).json({ message: "Usuario activo" });
+    } catch (error) {
+        return res.status(500).json({ error: "Error en la validación" });
+    }
+};

@@ -3,7 +3,7 @@ import { validateMid } from "../middlewares/validarMiddleware.js";
 import { authToken } from "../middlewares/validarToken.js";
 import { createUserCrudSchema, loginSchema, registroSchema, updatePasswordSchema, updateProfileSchema, updateSchema } from "../schemas/users.schemas.js"; //Validación de datos
 import { getUsers, getUserId, createUserCrud, updateUserId, deleteUserId, updateUserIdPassword } from "../controllers/users.admin.controller.js"; //CRUD usuarios
-import { createUser, loginUser, logout } from "../controllers/auth.controller.js";
+import { createUser, loginUser, logout, validateUserExists } from "../controllers/auth.controller.js";
 import { deleteProfile, getProfile, updateProfile, updateProfilePassword } from "../controllers/profile.controller.js";
 
 
@@ -13,6 +13,9 @@ const router = Router();
 router.post('/signup/', validateMid(registroSchema), createUser); //Registrar un usuario
 router.post('/login/', validateMid(loginSchema), loginUser); //Iniciar sesión
 router.post('/logout/', logout); // Cerrar sesión eliminando token de cookies
+
+//Validación de existencia de usuario por ID para APIGATEWAY
+router.get('/validate-exists/:id', validateUserExists);
 
 // CRUD de usuarios para admin
 router.get('/users/', authToken, getUsers); //Obtener todos los usuarios
